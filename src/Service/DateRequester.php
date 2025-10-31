@@ -9,7 +9,7 @@ class DateRequester
 {
     public function __construct(
         private EntityManagerInterface $em,
-        private DateParser $dateParser
+        private DateManager $dateManager
     ) {}
 
     public function getDate(string $rawDate): Date
@@ -17,11 +17,7 @@ class DateRequester
         $date = $this->em->getRepository(Date::class)->findOneBy(['raw' => $rawDate]);
 
         if (!$date) {
-            $date = new Date();
-
-            $date->setRaw($rawDate);
-            $date->setParsed($this->dateParser->parse($rawDate));
-            $date->setParsedCount(1);
+            $date = $this->dateManager->createFromRawDate($rawDate);
         } else {
             $date->setParsedCount($date->getParsedCount() + 1);
         }
