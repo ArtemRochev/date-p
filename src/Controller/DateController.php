@@ -2,13 +2,13 @@
 
 namespace App\Controller;
 
-use App\Service\DateParser;
+use App\Repository\DateRepository;
 use App\Service\DateRequester;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -36,16 +36,8 @@ class DateController
     }
 
     #[Route('/', methods: ['GET'])]
-    public function list(Request $request): JsonResponse
+    public function list(DateRepository $dateRepository, NormalizerInterface $normalizer): JsonResponse
     {
-        try {
-            $dateTime = new \DateTime($date);
-
-            return new JsonResponse([
-                'parsed' => $dateParser->parse($dateTime)
-            ]);
-        } catch (\DateMalformedStringException $e) {
-            return new JsonResponse(['errors' => ['date' => 'invalid']], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
+        return new JsonResponse($normalizer->normalize($dateRepository->findAll(), 'json'));
     }
 }

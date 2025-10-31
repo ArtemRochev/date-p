@@ -31,13 +31,11 @@ class DateRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Date
-//    {
-//        return $this->createQueryBuilder('d')
-//            ->andWhere('d.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findAll(): array
+    {
+        return $this->createQueryBuilder('d')
+            ->getQuery()
+            ->getArrayResult()
+        ;
+    }
 }
