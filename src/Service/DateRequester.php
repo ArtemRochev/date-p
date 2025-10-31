@@ -8,8 +8,8 @@ use Doctrine\ORM\EntityManagerInterface;
 class DateRequester
 {
     public function __construct(
-        private EntityManagerInterface $em,
-        private DateManager $dateManager
+        private DateManager $dateManager,
+        private EntityManagerInterface $em
     ) {}
 
     public function getDate(string $rawDate): Date
@@ -19,11 +19,8 @@ class DateRequester
         if (!$date) {
             $date = $this->dateManager->createFromRawDate($rawDate);
         } else {
-            $date->setParsedCount($date->getParsedCount() + 1);
+            $this->dateManager->incrementParsedCount($date);
         }
-
-        $this->em->persist($date);
-        $this->em->flush();
 
         return $date;
     }
