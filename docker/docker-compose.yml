@@ -1,0 +1,42 @@
+networks:
+    main-net:
+        driver: bridge
+
+services:
+    php:
+        container_name: php
+        image: webdevops/php-nginx:8.4
+        working_dir: ${CONTAINER_APP_DIR}
+        expose:
+            - '9000'
+        ports:
+            - "${NGINX_HOST_HTTP_PORT}:80"
+        networks:
+            - main-net
+        environment:
+            - WEB_DOCUMENT_ROOT=${CONTAINER_APP_DIR}
+            - WEB_DOCUMENT_INDEX=public/index.php
+        volumes:
+            - ..:${CONTAINER_APP_DIR}
+    redis:
+        container_name: redis
+        image: redis:latest
+        networks:
+            - main-net
+    db:
+        container_name: db
+        image: mysql:8.0.33
+        environment:
+            - MYSQL_DATABASE=${MYSQL_DATABASE}
+            - MYSQL_USER=${MYSQL_USER}
+            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+        ports:
+            - "${MYSQL_HOST_PORT}:3306"
+        volumes:
+            - ${DB_DATA_DIR}:/var/lib/mysql
+            - ./sql/:/var/sql
+            - ./override.cnf:/etc/mysql/conf.d/override.cnf
+        networks:
+            - main-net
+
