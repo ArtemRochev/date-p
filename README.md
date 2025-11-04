@@ -1,5 +1,6 @@
 Install
 ```
+cp docker/env-example docker/.env
 cd docker && docker-compose up -d
 docker exec php bash -c "composer install"
 docker exec php bash -c "php bin/console doctrine:schema:update --force"
